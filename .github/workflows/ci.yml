@@ -1,5 +1,6 @@
 name: CI
 # Continuous Integration workflow - runs tests on all pull requests
+# Validates code quality before merging
 
 on:
   pull_request:
