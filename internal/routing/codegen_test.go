@@ -412,8 +412,8 @@ go 1.22
 	code := string(content)
 	assert.Contains(t, code, "package app")
 	assert.Contains(t, code, "func RegisterRoutes(r *router.Router)")
-	assert.Contains(t, code, "github.com/cstone-io/twine/kit")
-	assert.Contains(t, code, "github.com/cstone-io/twine/router")
+	assert.Contains(t, code, "github.com/cstone-io/twine/pkg/kit")
+	assert.Contains(t, code, "github.com/cstone-io/twine/pkg/router")
 }
 
 // TestCodeGenerator_Generate_WithMultipleRoutes tests generation with multiple routes
@@ -715,9 +715,9 @@ func TestCodeGenerator_GenerateCode_Imports(t *testing.T) {
 	code := gen.generateCode(routes)
 
 	// Verify standard imports
-	assert.Contains(t, code, `"github.com/cstone-io/twine/kit"`)
-	assert.Contains(t, code, `"github.com/cstone-io/twine/router"`)
-	assert.Contains(t, code, `"github.com/cstone-io/twine/middleware"`)
+	assert.Contains(t, code, `"github.com/cstone-io/twine/pkg/kit"`)
+	assert.Contains(t, code, `"github.com/cstone-io/twine/pkg/router"`)
+	assert.Contains(t, code, `"github.com/cstone-io/twine/pkg/middleware"`)
 }
 
 // TestCodeGenerator_GenerateCode_ApplyMiddleware tests middleware helper function

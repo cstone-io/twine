@@ -83,6 +83,21 @@ func TestIsWatchedFile(t *testing.T) {
 			path:     "/app/FILE.GO",
 			expected: false, // Case sensitive
 		},
+		{
+			name:     "routes.gen.go should be excluded",
+			path:     "app/routes.gen.go",
+			expected: false,
+		},
+		{
+			name:     "routes.gen.go with different path should be excluded",
+			path:     "/full/path/to/app/routes.gen.go",
+			expected: false,
+		},
+		{
+			name:     "other gen.go files should NOT be excluded",
+			path:     "app/custom.gen.go",
+			expected: true,
+		},
 	}
 
 	for _, tt := range tests {

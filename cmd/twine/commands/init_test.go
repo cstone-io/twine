@@ -397,7 +397,7 @@ func TestCreateAppStructure_ContentVerification(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Contains(t, string(pageContent), "package pages")
-	assert.Contains(t, string(pageContent), `import "github.com/cstone-io/twine/kit"`)
+	assert.Contains(t, string(pageContent), `import "github.com/cstone-io/twine/pkg/kit"`)
 	assert.Contains(t, string(pageContent), "func GET(k *kit.Kit) error")
 	assert.Contains(t, string(pageContent), "k.Render")
 	assert.Contains(t, string(pageContent), "Welcome to Twine")

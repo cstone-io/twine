@@ -26,7 +26,7 @@ func setupFixture(t *testing.T, structure map[string]string) string {
 
 func createTestPageHandler(packageName string, methods ...string) string {
 	content := "package " + packageName + "\n\n"
-	content += "import \"github.com/cstone-io/twine/kit\"\n\n"
+	content += "import \"github.com/cstone-io/twine/pkg/kit\"\n\n"
 
 	for _, method := range methods {
 		content += "func " + method + "(k *kit.Kit) error {\n"
@@ -39,7 +39,7 @@ func createTestPageHandler(packageName string, methods ...string) string {
 
 func createTestLayout(packageName string) string {
 	content := "package " + packageName + "\n\n"
-	content += "import \"github.com/cstone-io/twine/middleware\"\n\n"
+	content += "import \"github.com/cstone-io/twine/pkg/middleware\"\n\n"
 	content += "func Layout() middleware.Middleware {\n"
 	content += "\treturn func(next kit.HandlerFunc) kit.HandlerFunc {\n"
 	content += "\t\treturn next\n"
@@ -376,7 +376,7 @@ func TestDetectMethods_AllHTTPMethods(t *testing.T) {
 			name: "GET only",
 			content: `package test
 
-import "github.com/cstone-io/twine/kit"
+import "github.com/cstone-io/twine/pkg/kit"
 
 func GET(k *kit.Kit) error {
 	return nil
@@ -388,7 +388,7 @@ func GET(k *kit.Kit) error {
 			name: "POST only",
 			content: `package test
 
-import "github.com/cstone-io/twine/kit"
+import "github.com/cstone-io/twine/pkg/kit"
 
 func POST(k *kit.Kit) error {
 	return nil
@@ -400,7 +400,7 @@ func POST(k *kit.Kit) error {
 			name: "GET and POST",
 			content: `package test
 
-import "github.com/cstone-io/twine/kit"
+import "github.com/cstone-io/twine/pkg/kit"
 
 func GET(k *kit.Kit) error {
 	return nil
@@ -416,7 +416,7 @@ func POST(k *kit.Kit) error {
 			name: "all methods",
 			content: `package test
 
-import "github.com/cstone-io/twine/kit"
+import "github.com/cstone-io/twine/pkg/kit"
 
 func GET(k *kit.Kit) error { return nil }
 func POST(k *kit.Kit) error { return nil }
@@ -430,7 +430,7 @@ func PATCH(k *kit.Kit) error { return nil }
 			name: "ignores unexported functions",
 			content: `package test
 
-import "github.com/cstone-io/twine/kit"
+import "github.com/cstone-io/twine/pkg/kit"
 
 func GET(k *kit.Kit) error { return nil }
 func internal() { }
@@ -442,7 +442,7 @@ func helper(x int) int { return x }
 			name: "ignores invalid method names",
 			content: `package test
 
-import "github.com/cstone-io/twine/kit"
+import "github.com/cstone-io/twine/pkg/kit"
 
 func GET(k *kit.Kit) error { return nil }
 func OPTIONS(k *kit.Kit) error { return nil }  // Not in valid methods
