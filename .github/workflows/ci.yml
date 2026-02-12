@@ -38,9 +38,8 @@ jobs:
           cache: true
 
       - name: Install Just
-        uses: extractions/setup-just@v3
-        with:
-          just-version: latest
+        if: steps.changes.outputs.any_changed == 'true'
+        uses: extractions/setup-just@v2
 
       - name: Run tests
         if: steps.changes.outputs.any_changed == 'true'
