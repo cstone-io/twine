@@ -1,4 +1,5 @@
 name: CI
+# Continuous Integration workflow - runs tests on all pull requests
 
 on:
   pull_request:
