@@ -10,9 +10,6 @@ permissions:
 
 jobs:
   test:
-    # Skip release-please PRs since they only update version files
-    if: "!startsWith(github.head_ref, 'release-please--')"
-
     runs-on: ubuntu-latest
 
     steps:
