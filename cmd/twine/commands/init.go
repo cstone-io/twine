@@ -98,10 +98,26 @@ func initProject(config ProjectConfig) error {
 	fmt.Println("\n✓ Downloading Go dependencies...")
 	cmd := exec.Command("go", "mod", "tidy")
 	cmd.Dir = projectPath
-	if err := cmd.Run(); err != nil {
-		fmt.Printf("\nWarning: Could not download Go dependencies automatically.\n")
-		fmt.Printf("This is expected if the Twine framework hasn't been published yet.\n")
-		fmt.Printf("You can manually run 'go mod tidy' in the project directory.\n")
+	output, err := cmd.CombinedOutput()
+
+	goSumPath := filepath.Join(projectPath, "go.sum")
+	if err != nil {
+		fmt.Printf("\n⚠️  Warning: Could not download Go dependencies automatically.\n")
+		fmt.Printf("Error: %s\n\n", string(output))
+		printDependencyTroubleshooting(config.ProjectName)
+	} else {
+		// Verify go.sum was actually created/populated
+		if _, statErr := os.Stat(goSumPath); os.IsNotExist(statErr) {
+			fmt.Printf("\n⚠️  Warning: go.sum was not created.\n")
+			printDependencyTroubleshooting(config.ProjectName)
+		} else {
+			// Verify twine module is in go.sum
+			content, _ := os.ReadFile(goSumPath)
+			if !strings.Contains(string(content), "github.com/cstone-io/twine") {
+				fmt.Printf("\n⚠️  Warning: Twine framework not found in go.sum.\n")
+				printDependencyTroubleshooting(config.ProjectName)
+			}
+		}
 	}
 
 	// 7. Install Node.js dependencies
@@ -119,6 +135,20 @@ func initProject(config ProjectConfig) error {
 	// 9. Print success message
 	printSuccessMessage(config)
 	return nil
+}
+
+func printDependencyTroubleshooting(projectName string) {
+	fmt.Printf("This typically happens when:\n")
+	fmt.Printf("  • The Twine framework hasn't been published to GitHub yet\n")
+	fmt.Printf("  • Network connectivity issues\n")
+	fmt.Printf("  • Go module proxy is unreachable\n\n")
+
+	fmt.Printf("To fix this for local development:\n")
+	fmt.Printf("  1. cd %s\n", projectName)
+	fmt.Printf("  2. Add this line to your go.mod:\n")
+	fmt.Printf("     replace github.com/cstone-io/twine => /path/to/local/twine\n")
+	fmt.Printf("  3. Run: go mod tidy\n")
+	fmt.Printf("  4. Run: twine dev\n\n")
 }
 
 func generateFiles(config ProjectConfig, projectPath string) error {
@@ -229,7 +259,7 @@ func createAppStructure(config ProjectConfig, projectPath string) error {
 	// Generate app/pages/page.go
 	pageContent := `package pages
 
-import "github.com/cstone-io/twine/kit"
+import "github.com/cstone-io/twine/pkg/kit"
 
 func GET(k *kit.Kit) error {
 	return k.Render("index", map[string]any{
@@ -246,8 +276,8 @@ func GET(k *kit.Kit) error {
 	layoutContent := `package pages
 
 import (
-	"github.com/cstone-io/twine/kit"
-	"github.com/cstone-io/twine/middleware"
+	"github.com/cstone-io/twine/pkg/kit"
+	"github.com/cstone-io/twine/pkg/middleware"
 )
 
 func Layout() middleware.Middleware {
@@ -267,7 +297,7 @@ func Layout() middleware.Middleware {
 	// Generate app/api/health/route.go
 	healthContent := `package health
 
-import "github.com/cstone-io/twine/kit"
+import "github.com/cstone-io/twine/pkg/kit"
 
 func GET(k *kit.Kit) error {
 	return k.JSON(200, map[string]any{

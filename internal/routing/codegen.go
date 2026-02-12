@@ -69,9 +69,9 @@ func (g *CodeGenerator) generateCode(routes []*RouteNode) string {
 
 	// Imports
 	sb.WriteString("import (\n")
-	sb.WriteString("\t\"github.com/cstone-io/twine/kit\"\n")
-	sb.WriteString("\t\"github.com/cstone-io/twine/router\"\n")
-	sb.WriteString("\t\"github.com/cstone-io/twine/middleware\"\n")
+	sb.WriteString("\t\"github.com/cstone-io/twine/pkg/kit\"\n")
+	sb.WriteString("\t\"github.com/cstone-io/twine/pkg/router\"\n")
+	sb.WriteString("\t\"github.com/cstone-io/twine/pkg/middleware\"\n")
 	sb.WriteString("\n")
 
 	// Collect unique package imports

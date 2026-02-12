@@ -170,6 +170,12 @@ func addDirectoryRecursive(watcher *fsnotify.Watcher, dir string) error {
 }
 
 func isWatchedFile(path string) bool {
+	// Exclude generated files to prevent infinite regeneration loop
+	basename := filepath.Base(path)
+	if basename == "routes.gen.go" {
+		return false
+	}
+
 	ext := filepath.Ext(path)
 	return ext == ".go"
 }
