@@ -1,0 +1,50 @@
+name: Auto PR
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-pr:
+    # Only auto-create PRs for repository owner
+    if: github.actor == 'cstone-io'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find existing PR
+        id: find-existing
+        uses: ./.github/actions/latest-pr
+
+      - name: Create PR if needed
+        if: steps.find-existing.outputs.pr-url == ''
+        id: create-pr
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          pr_url=$(gh pr create \
+            --base main \
+            --head "${GITHUB_REF_NAME}" \
+            --title "$(git log -1 --pretty=%s)" \
+            --body "Auto-created PR from branch \`${GITHUB_REF_NAME}\`")
+          echo "pr-url=$pr_url" >> $GITHUB_OUTPUT
+
+      - name: Resolve PR URL
+        id: resolve
+        uses: ./.github/actions/latest-pr
+
+      - name: Enable auto-merge
+        uses: ./.github/actions/auto-merge
+        with:
+          pr-url: ${{ steps.resolve.outputs.pr-url }}
+          token: ${{ secrets.PAT }}

@@ -1,0 +1,25 @@
+name: "Auto Merge PR"
+description: "Enable auto-merge on a pull request"
+
+inputs:
+  pr-url:
+    description: "The PR URL to enable auto-merge on"
+    required: true
+  token:
+    description: "GitHub Personal Access Token with repo scope"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Enable auto-merge
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        if [ -n "${{ inputs.pr-url }}" ]; then
+          gh pr merge --auto --merge "${{ inputs.pr-url }}"
+          echo "✅ Auto-merge enabled on PR: ${{ inputs.pr-url }}"
+        else
+          echo "⚠️  No PR URL provided, skipping auto-merge"
+        fi
