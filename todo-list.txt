@@ -1,8 +1,6 @@
 - tighter integration of air and twine dev commands, make sure they are aligned
-
 - github actions for automated release, CI/CD etc.
-
 - SQLC integration for powerful combination with GORM?
-
 - End-to-end integration tests
 - Performance benchmarks
+- twine update command to get latest version with confirmation prompt

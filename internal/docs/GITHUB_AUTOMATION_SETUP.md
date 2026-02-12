@@ -41,26 +41,33 @@ All workflow files, composite actions, and configuration have been created:
    - **Secret:** Paste the token from Step 1
 4. Click "Add secret"
 
-### Step 3: Configure Branch Protection
+### Step 3: Configure Branch Protection Ruleset
 
-1. Go to: https://github.com/cstone-io/twine/settings/branches
-2. Click "Add rule" (or edit existing rule for `main`)
+1. Go to: https://github.com/cstone-io/twine/settings/rules
+2. Edit the `protect-main` ruleset (or create new ruleset for `main`)
 3. Configure:
 
-   **Branch name pattern:** `main`
+   **Target branches:** `main`
 
-   **Protect matching branches:**
+   **Rules:**
    - [x] Require a pull request before merging
      - Required approvals: `0` (you're the owner)
      - [x] Dismiss stale pull request approvals when new commits are pushed
+     - [ ] Require approval of the most recent reviewable push (MUST be unchecked!)
+     - **Allowed merge methods:** ✅ Squash only (NOT merge!)
    - [x] Require status checks to pass before merging
      - [x] Require branches to be up to date before merging
      - **Required checks:** Add `test` (will appear after first CI run)
    - [x] Require linear history
-   - [x] Allow specified actors to bypass required pull requests
-     - Add: `github-actions` (the bot account)
+   - [x] Block force pushes
+   - [x] Restrict deletions
 
-4. Click "Create" or "Save changes"
+   **Bypass list:**
+   - Repository admin: Enabled (allows you to bypass if needed)
+
+4. Click "Save changes"
+
+**IMPORTANT:** The ruleset MUST use "Squash" merge method, NOT "Merge". The combination of "Require linear history" + "Merge" commits is incompatible and causes all PRs to be blocked even when checks pass. Squash merging maintains linear history while the workflows use `--squash` flag.
 
 ### Step 4: Enable Auto-Merge
 
