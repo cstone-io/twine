@@ -11,9 +11,6 @@ permissions:
 
 jobs:
   release:
-    # Skip if commit is from release-please itself (chore(main): release X.Y.Z)
-    if: "!startsWith(github.event.head_commit.message, 'chore(main): release')"
-
     runs-on: ubuntu-latest
 
     steps:
