@@ -1,0 +1,20 @@
+{{define "index"}}
+{{template "base" .}}
+{{end}}
+
+{{define "title"}}{{.Title}}{{end}}
+
+{{define "content"}}
+<div class="max-w-4xl mx-auto px-6 py-16">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">{{.Title}}</h1>
+    <p class="text-lg text-gray-600 mb-8">{{.Message}}</p>
+
+    {{template "button" .}}
+
+    <div class="mt-8">
+        <a href="/about" class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+            About
+        </a>
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,52 @@
+package main
+
+import (
+	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"{{.ModulePath}}/app"
+	"github.com/cstone-io/twine/kit"
+	"github.com/cstone-io/twine/middleware"
+	"github.com/cstone-io/twine/public"
+	"github.com/cstone-io/twine/router"
+	"github.com/cstone-io/twine/server"
+	"github.com/cstone-io/twine/template"
+)
+
+func main() {
+	// Load templates
+	if err := template.LoadTemplates("templates/**/*.html"); err != nil {
+		panic(err)
+	}
+
+	// Create root router
+	r := router.NewRouter("")
+	r.Use(middleware.LoggingMiddleware())
+
+	// Register file-based routes from app/ directory
+	app.RegisterRoutes(r)
+
+	// You can still add manual routes here
+	// r.Get("/custom", CustomHandler)
+
+	// Initialize and create mux
+	mux := r.InitializeAsRoot()
+
+	// Serve static files
+	mux.Handle(public.PublicPath, public.FileServerHandler())
+
+	// 404 handler
+	mux.Handle("/*", kit.NotFoundHandler())
+
+	// Create and start server
+	srv := server.NewServer(":{{.Port}}", mux)
+	srv.Start()
+
+	// Wait for shutdown signal
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	srv.AwaitShutdown(ctx)
+}

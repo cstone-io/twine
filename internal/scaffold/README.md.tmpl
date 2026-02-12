@@ -1,0 +1,241 @@
+# {{.ProjectName}}
+
+A Twine application.
+
+## Getting Started
+
+### Development
+
+For the best development experience, run these commands in separate terminals:
+
+**Terminal 1: CSS watching**
+```bash
+npm run watch:css
+```
+
+**Terminal 2: Development server**
+```bash
+twine dev
+# or
+go run main.go
+```
+
+Then visit http://localhost:{{.Port}} in your browser.
+
+### Production
+
+Build the CSS for production:
+```bash
+npm run build:css
+```
+
+## Project Structure
+
+- `main.go` - Application entry point
+- `app/` - File-based routing
+  - `app/pages/` - Server-rendered pages (HTML responses)
+  - `app/api/` - API endpoints (JSON responses)
+- `templates/` - HTML templates
+- `public/assets/` - Static files
+  - `public/assets/css/input.css` - Tailwind CSS source
+  - `public/assets/css/output.css` - Compiled CSS (generated)
+
+## Frontend Development
+
+This project uses:
+- **Tailwind CSS** - Utility-first CSS framework
+- **HTMX** - High power tools for HTML
+- **jQuery** - JavaScript library for DOM manipulation
+
+Edit `public/assets/css/input.css` to add custom styles or Tailwind directives.
+
+## Template Architecture
+
+Twine uses Go's `html/template` with a three-tier architecture for composable, DRY templates:
+
+### Template Types
+
+1. **Base Layouts** (`templates/layouts/`) - Define full HTML structure with guaranteed script inclusion
+2. **Pages** (`templates/pages/`) - Extend base layouts, define page-specific content
+3. **Components** (`templates/components/`) - Reusable HTML fragments
+
+### Creating a New Page
+
+Pages extend the base layout using Go template blocks:
+
+` + "```" + `html
+{{"{{"}}define "my-page"{{"}}"}}
+{{"{{"}}template "base" .{{"}}"}}
+{{"{{"}}end{{"}}"}}
+
+{{"{{"}}define "title"{{"}}"}}My Page Title{{"{{"}}end{{"}}"}}
+
+{{"{{"}}define "content"{{"}}"}}
+<div class="max-w-4xl mx-auto px-6 py-16">
+    <h1>My Page</h1>
+    <!-- HTMX and jQuery are automatically available here -->
+    <button hx-get="/api/data" hx-target="#result">Load Data</button>
+    <div id="result"></div>
+</div>
+{{"{{"}}end{{"}}"}}
+` + "```" + `
+
+### Script Guarantees
+
+The base layout (`templates/layouts/base.html`) automatically includes:
+- **HTMX** (v1.9.10) - Loaded in `<head>` on every full page
+- **jQuery** (v3.7.1) - Loaded in `<head>` on every full page
+- **Tailwind CSS** - Your compiled styles
+
+You never need to manually include these scripts in your pages. They're guaranteed to be present.
+
+### Available Template Blocks
+
+When extending the base layout, you can customize these blocks:
+
+- `{{"{{"}}define "title"{{"}}"}}` - Page title (shown in browser tab)
+- `{{"{{"}}define "head"{{"}}"}}` - Additional `<head>` content (meta tags, page-specific styles)
+- `{{"{{"}}define "body-attrs"{{"}}"}}` - Customize `<body>` attributes (default: `class="bg-gray-50"`)
+- `{{"{{"}}define "content"{{"}}"}}` - Main page content (required)
+- `{{"{{"}}define "scripts"{{"}}"}}` - Page-specific JavaScript at end of `<body>`
+
+### Example: Page with Custom Meta Tags
+
+` + "```" + `html
+{{"{{"}}define "product-page"{{"}}"}}
+{{"{{"}}template "base" .{{"}}"}}
+{{"{{"}}end{{"}}"}}
+
+{{"{{"}}define "title"{{"}}"}}{{"{{"}} .Product.Name{{"}}"}} - My Store{{"{{"}}end{{"}}"}}
+
+{{"{{"}}define "head"{{"}}"}}
+<meta name="description" content="{{"{{"}} .Product.Description{{"}}"}}">
+<meta property="og:title" content="{{"{{"}} .Product.Name{{"}}"}}">
+<meta property="og:image" content="{{"{{"}} .Product.ImageURL{{"}}"}}">
+{{"{{"}}end{{"}}"}}
+
+{{"{{"}}define "content"{{"}}"}}
+<div class="max-w-4xl mx-auto px-6 py-16">
+    <h1>{{"{{"}} .Product.Name{{"}}"}}</h1>
+    <p>{{"{{"}} .Product.Description{{"}}"}}</p>
+</div>
+{{"{{"}}end{{"}}"}}
+` + "```" + `
+
+### Example: Page with Custom JavaScript
+
+` + "```" + `html
+{{"{{"}}define "dashboard"{{"}}"}}
+{{"{{"}}template "base" .{{"}}"}}
+{{"{{"}}end{{"}}"}}
+
+{{"{{"}}define "content"{{"}}"}}
+<div id="chart"></div>
+{{"{{"}}end{{"}}"}}
+
+{{"{{"}}define "scripts"{{"}}"}}
+<script>
+// jQuery and HTMX are already loaded
+$(document).ready(function() {
+    // Initialize chart or other custom behavior
+    $('#chart').myChartLibrary({...});
+});
+</script>
+{{"{{"}}end{{"}}"}}
+` + "```" + `
+
+### Components and HTMX Partials
+
+Components are pure HTML fragments without layouts:
+
+` + "```" + `html
+{{"{{"}}define "user-card"{{"}}"}}
+<div class="card">
+    <h3>{{"{{"}} .Name{{"}}"}}</h3>
+    <p>{{"{{"}} .Email{{"}}"}}</p>
+</div>
+{{"{{"}}end{{"}}"}}
+` + "```" + `
+
+**Key Points:**
+- Components don't include script tags (by design)
+- They can be included in pages: ` + "`" + `{{"{{"}}template "user-card" .User{{"}}"}}` + "`" + `
+- They can be rendered as HTMX partial responses via `k.RenderPartial("user-card", data)`
+- When rendered as partials, they return pure HTML without the base layout
+
+### Full Pages vs HTMX Partials
+
+Twine's Kit automatically detects HTMX requests:
+
+```go
+// In your handler
+func GET(k *kit.Kit) error {
+    data := map[string]any{"Name": "Alice", "Email": "alice@example.com"}
+
+    // Auto-detects based on HX-Request header
+    return k.Render("user-card", data)
+    // - Full page request → includes base layout with scripts
+    // - HTMX request → pure HTML fragment
+}
+```
+
+Or be explicit:
+
+```go
+// Always use base layout (for full page loads)
+return k.RenderTemplate("user-card", data)
+
+// Never use layout (for HTMX swaps)
+return k.RenderPartial("user-card", data)
+```
+
+### Migration from Old Templates
+
+If you have existing Twine templates with full HTML structure:
+
+1. Create `templates/layouts/base.html` from the scaffold
+2. For each page template:
+   - Remove ` + "`" + `<!DOCTYPE>` + "`" + `, ` + "`" + `<html>` + "`" + `, ` + "`" + `<head>` + "`" + `, ` + "`" + `<body>` + "`" + ` wrapper
+   - Add ` + "`" + `{{"{{"}}template "base" .{{"}}"}}` + "`" + ` at top
+   - Wrap content in ` + "`" + `{{"{{"}}define "content"{{"}}"}}...{{"{{"}}end{{"}}"}}` + "`" + `
+   - Extract title to ` + "`" + `{{"{{"}}define "title"{{"}}"}}...{{"{{"}}end{{"}}"}}` + "`" + `
+   - Remove script tags (HTMX, jQuery) - they're now in base
+3. Component templates don't need changes
+
+**Before:**
+` + "```" + `html
+{{"{{"}}define "my-page"{{"}}"}}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{"{{"}} .Title{{"}}"}}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+    <h1>{{"{{"}} .Title{{"}}"}}</h1>
+    <p>{{"{{"}} .Content{{"}}"}}</p>
+</body>
+</html>
+{{"{{"}}end{{"}}"}}
+` + "```" + `
+
+**After:**
+` + "```" + `html
+{{"{{"}}define "my-page"{{"}}"}}
+{{"{{"}}template "base" .{{"}}"}}
+{{"{{"}}end{{"}}"}}
+
+{{"{{"}}define "title"{{"}}"}}{{"{{"}} .Title{{"{{"}}end{{"}}"}}
+
+{{"{{"}}define "content"{{"}}"}}
+<h1>{{"{{"}} .Title{{"}}"}}</h1>
+<p>{{"{{"}} .Content{{"}}"}}</p>
+{{"{{"}}end{{"}}"}}
+` + "```" + `
+
+## Learn More
+
+- [Twine Documentation](https://github.com/cstone/twine)
+- [Tailwind CSS](https://tailwindcss.com)
+- [HTMX](https://htmx.org)
+- [Go html/template](https://pkg.go.dev/html/template)
