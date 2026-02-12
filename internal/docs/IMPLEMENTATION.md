@@ -248,5 +248,5 @@ Users migrating from mca-mono should:
 3. Update template syntax from Templ to html/template
 4. Remove Templ from dependencies
 5. Remove `templ generate` from build process
-6. Update imports from `mca-mono/*` to `github.com/cstone/twine/*`
+6. Update imports from `mca-mono/*` to `github.com/cstone-io/twine/*`
 7. Update `.air.toml` to remove Templ exclusions

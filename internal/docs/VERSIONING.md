@@ -124,7 +124,7 @@ The `.github/workflows/release.yml` workflow:
 ### 3. **Users Download from GitHub Releases**
 ```bash
 # Download for their platform
-curl -L https://github.com/cstone/twine/releases/download/v0.1.0/twine-darwin-arm64 -o twine
+curl -L https://github.com/cstone-io/twine/releases/download/v0.1.0/twine-darwin-arm64 -o twine
 chmod +x twine
 ./twine version
 # Twine CLI
@@ -165,7 +165,7 @@ VERSION.txt:
 
 **go.mod version:**
 ```go
-module github.com/cstone/twine v0.1.0 // ❌ This is for module version, not app version
+module github.com/cstone-io/twine v0.1.0 // ❌ This is for module version, not app version
 ```
 - `go.mod` version is for the **module API**, not the CLI tool
 - They can differ (module v1.0.0 might contain CLI v0.5.3)

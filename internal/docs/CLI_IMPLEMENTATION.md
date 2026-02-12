@@ -135,7 +135,7 @@ twine init minimal --no-examples
 ```bash
 cd test-project
 # Add replace directive for local development
-echo "replace github.com/cstone/twine => ../twine" >> go.mod
+echo "replace github.com/cstone-io/twine => ../twine" >> go.mod
 go mod tidy
 go build
 ```
@@ -147,7 +147,7 @@ go build
 
 ### For Users
 ```bash
-go install github.com/cstone/twine/cmd/twine@latest
+go install github.com/cstone-io/twine/cmd/twine@latest
 ```
 
 ### For Development
@@ -169,7 +169,7 @@ cd my-app
 
 # For local development, add replace directive
 echo "" >> go.mod
-echo "replace github.com/cstone/twine => ../twine" >> go.mod
+echo "replace github.com/cstone-io/twine => ../twine" >> go.mod
 
 # Run the app
 go run main.go

@@ -5,7 +5,7 @@ The official command-line tool for the Twine web framework.
 ## Installation
 
 ```bash
-go install github.com/cstone/twine/cmd/twine@latest
+go install github.com/cstone-io/twine/cmd/twine@latest
 ```
 
 ## Usage
@@ -111,7 +111,7 @@ http://localhost:3000
 ### Building from Source
 
 ```bash
-git clone https://github.com/cstone/twine
+git clone https://github.com/cstone-io/twine
 cd twine/cmd/twine
 go build -o twine
 ```

@@ -10,22 +10,43 @@ Twine is a full-stack Go web framework for server-side rendered applications wit
 
 ## Build & Development Commands
 
+This project uses [just](https://github.com/casey/just) as a command runner. Run `just` or `just --list` to see all available commands.
+
 ### Building the CLI
 ```bash
 # Build CLI with version info
-make build-cli
+just build-cli
 
 # Install CLI to $GOPATH/bin
-make install-cli
+just install-cli
 
 # Build for all platforms
-make build-cli-all
+just build-cli-all
+
+# Show version info that will be injected
+just version-info
+```
+
+### Installing from GitHub
+```bash
+# Install the latest version from GitHub
+go install github.com/cstone-io/twine/cmd/twine@latest
+
+# Or install a specific version
+go install github.com/cstone-io/twine/cmd/twine@v0.1.0
 ```
 
 ### Testing
 ```bash
 # Run all tests
-make test
+just test
+
+# Run only unit tests (skip integration)
+just test-unit
+
+# Run tests with coverage report
+just test-coverage
+
 # Or directly:
 go test -v ./...
 ```
@@ -33,10 +54,7 @@ go test -v ./...
 ### Development with Air
 The project uses Air for hot reload during development:
 ```bash
-# Start dev server (requires Air: go install github.com/air-verse/air@latest)
-make run
-
-# Or use the CLI tool for automatic route generation:
+# Use the CLI tool for automatic route generation and hot reload
 twine dev
 ```
 
@@ -44,8 +62,11 @@ Air configuration (`.air.toml`) runs on proxy port 3001, proxying to app on port
 
 ### CSS Compilation
 ```bash
-# Compile Tailwind CSS
-make css
+# Compile Tailwind CSS once
+just css
+
+# Watch and recompile on changes
+just css-watch
 ```
 
 ### Working with Routes
@@ -431,7 +452,7 @@ The CLI (`cmd/twine/`) uses Cobra for command structure:
 - `commands/routes.go` - Route generation and inspection
 - `commands/version.go` - Version information
 
-Version info is injected at build time via ldflags (see `Makefile`).
+Version info is injected at build time via ldflags (see `justfile`).
 
 ## Internal Packages
 
@@ -448,7 +469,8 @@ The `internal/` directory contains framework-internal code:
 ## Important Notes
 
 - This project uses conventional commit message format (see the `conventional-commits` skill)
-- The module path is `github.com/cstone-io/twine` (note: this differs from README which shows `github.com/cstone/twine`)
+- This project uses `just` (not `make`) for build automation - run `just` to see available commands
+- The module path is `github.com/cstone-io/twine`
 - File-based routing is regenerated on save when using `twine dev`
 - The `app/routes.gen.go` file is auto-generated and should not be manually edited
 - Alpine Ajax integration is automatic - the Kit detects `X-Alpine-Request` headers

@@ -152,10 +152,10 @@ mkdir myapp && cd myapp
 go mod init myapp
 
 # Add Twine dependency
-go get github.com/cstone/twine
+go get github.com/cstone-io/twine
 
 # Copy example structure
-cp -r $GOPATH/pkg/mod/github.com/cstone/twine@*/examples/quickstart/* .
+cp -r $GOPATH/pkg/mod/github.com/cstone-io/twine@*/examples/quickstart/* .
 
 # Run the app
 go run main.go
@@ -194,7 +194,7 @@ twine/
 | Type Safety | Type-safe components | Runtime template execution |
 | Syntax | Custom Templ syntax | Standard Go template syntax |
 | Dependencies | Templ + GORM + JWT | GORM + JWT only |
-| Package Name | `mca-mono` | `github.com/cstone/twine` |
+| Package Name | `mca-mono` | `github.com/cstone-io/twine` |
 
 ## Next Steps
 

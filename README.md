@@ -18,13 +18,13 @@ A full-stack Go web framework for building server-side rendered applications wit
 ### Install CLI Tool (Recommended)
 
 ```bash
-go install github.com/cstone/twine/cmd/twine@latest
+go install github.com/cstone-io/twine/cmd/twine@latest
 ```
 
 ### Or Install Framework Only
 
 ```bash
-go get github.com/cstone/twine
+go get github.com/cstone-io/twine
 ```
 
 ## Quick Start
@@ -77,10 +77,10 @@ import (
     "os/signal"
     "syscall"
 
-    "github.com/cstone/twine/router"
-    "github.com/cstone/twine/kit"
-    "github.com/cstone/twine/server"
-    "github.com/cstone/twine/template"
+    "github.com/cstone-io/twine/router"
+    "github.com/cstone-io/twine/kit"
+    "github.com/cstone-io/twine/server"
+    "github.com/cstone-io/twine/template"
 )
 
 func main() {
