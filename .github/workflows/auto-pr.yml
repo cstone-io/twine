@@ -1,4 +1,5 @@
 name: Auto PR
+# Automatically creates pull requests for owner's feature branches
 
 on:
   push:
