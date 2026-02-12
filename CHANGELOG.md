@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/cstone-io/twine/compare/twine-v0.2.0...twine-v0.2.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* exclude release-please branches from auto-PR workflow ([#9](https://github.com/cstone-io/twine/issues/9)) ([32c59ea](https://github.com/cstone-io/twine/commit/32c59ea73bf6acfb2a099deff9a34b1db176139b))
+* run CI on release-please PRs to enable auto-merge ([#11](https://github.com/cstone-io/twine/issues/11)) ([c1e0201](https://github.com/cstone-io/twine/commit/c1e02012cb0b36978f5b763e48f615f0f00246c5))
+
 ## [0.2.0](https://github.com/cstone-io/twine/compare/twine-v0.1.2...twine-v0.2.0) (2026-02-12)
 
 
