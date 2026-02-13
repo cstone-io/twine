@@ -20,21 +20,21 @@ func TestNewVersionCommand(t *testing.T) {
 // TestVersionCommand_Run tests version output
 func TestVersionCommand_Run(t *testing.T) {
 	// Temporarily override version variables for testing
-	originalVersion := version
-	originalCommit := commit
-	originalDate := date
-	originalBuiltBy := builtBy
+	originalVersion := Version
+	originalCommit := Commit
+	originalDate := Date
+	originalBuiltBy := BuiltBy
 
-	version = "1.0.0"
-	commit = "abc123"
-	date = "2024-01-01"
-	builtBy = "test"
+	Version = "1.0.0"
+	Commit = "abc123"
+	Date = "2024-01-01"
+	BuiltBy = "test"
 
 	defer func() {
-		version = originalVersion
-		commit = originalCommit
-		date = originalDate
-		builtBy = originalBuiltBy
+		Version = originalVersion
+		Commit = originalCommit
+		Date = originalDate
+		BuiltBy = originalBuiltBy
 	}()
 
 	cmd := NewVersionCommand()
@@ -50,21 +50,21 @@ func TestVersionCommand_Run(t *testing.T) {
 // TestVersionCommand_DefaultValues tests default build-time values
 func TestVersionCommand_DefaultValues(t *testing.T) {
 	// When not set via ldflags, should use defaults
-	originalVersion := version
-	originalCommit := commit
-	originalDate := date
-	originalBuiltBy := builtBy
+	originalVersion := Version
+	originalCommit := Commit
+	originalDate := Date
+	originalBuiltBy := BuiltBy
 
-	version = "dev"
-	commit = "none"
-	date = "unknown"
-	builtBy = "unknown"
+	Version = "dev"
+	Commit = "none"
+	Date = "unknown"
+	BuiltBy = "unknown"
 
 	defer func() {
-		version = originalVersion
-		commit = originalCommit
-		date = originalDate
-		builtBy = originalBuiltBy
+		Version = originalVersion
+		Commit = originalCommit
+		Date = originalDate
+		BuiltBy = originalBuiltBy
 	}()
 
 	cmd := NewVersionCommand()

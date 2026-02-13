@@ -13,7 +13,7 @@ build_date := `date -u '+%Y-%m-%d_%H:%M:%S'`
 built_by := env_var_or_default("USER", "unknown")
 
 # Go linker flags for version injection
-ldflags := "-ldflags \"-X main.version=" + version + " -X main.commit=" + commit + " -X main.date=" + build_date + " -X main.builtBy=" + built_by + "\""
+ldflags := "-ldflags \"-X github.com/cstone-io/twine/cmd/twine/commands.Version=" + version + " -X github.com/cstone-io/twine/cmd/twine/commands.Commit=" + commit + " -X github.com/cstone-io/twine/cmd/twine/commands.Date=" + build_date + " -X github.com/cstone-io/twine/cmd/twine/commands.BuiltBy=" + built_by + "\""
 
 # -----------------------------------------------------------------------------
 # HIGH LEVEL COMMANDS

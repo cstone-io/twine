@@ -7,10 +7,11 @@ import (
 
 var (
 	// Build-time variables (set via -ldflags)
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
-	builtBy = "unknown"
+	// Exported for use by update command
+	Version = "dev"
+	Commit  = "none"
+	Date    = "unknown"
+	BuiltBy = "unknown"
 )
 
 func NewVersionCommand() *cobra.Command {
@@ -20,10 +21,10 @@ func NewVersionCommand() *cobra.Command {
 		Long:  "Print version, commit, build date, and other build information",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Printf("Twine CLI\n")
-			fmt.Printf("  Version:    %s\n", version)
-			fmt.Printf("  Commit:     %s\n", commit)
-			fmt.Printf("  Built:      %s\n", date)
-			fmt.Printf("  Built by:   %s\n", builtBy)
+			fmt.Printf("  Version:    %s\n", Version)
+			fmt.Printf("  Commit:     %s\n", Commit)
+			fmt.Printf("  Built:      %s\n", Date)
+			fmt.Printf("  Built by:   %s\n", BuiltBy)
 		},
 	}
 }

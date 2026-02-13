@@ -19,6 +19,7 @@ func main() {
 	rootCmd.AddCommand(commands.NewDevCommand())
 	rootCmd.AddCommand(commands.NewInitCommand())
 	rootCmd.AddCommand(commands.NewRoutesCommand())
+	rootCmd.AddCommand(commands.NewUpdateCommand())
 	rootCmd.AddCommand(commands.NewVersionCommand())
 
 	if err := rootCmd.Execute(); err != nil {
