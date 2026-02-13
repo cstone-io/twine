@@ -15,19 +15,68 @@ built_by := env_var_or_default("USER", "unknown")
 # Go linker flags for version injection
 ldflags := "-ldflags \"-X main.version=" + version + " -X main.commit=" + commit + " -X main.date=" + build_date + " -X main.builtBy=" + built_by + "\""
 
+# -----------------------------------------------------------------------------
+# HIGH LEVEL COMMANDS
+# -----------------------------------------------------------------------------
+
 # Default recipe - list all available recipes
 default:
     @just --list
 
-# Build the main application (depends on CSS compilation)
-build: css
-    templ generate
-    mkdir -p ./bin
-    go build -o ./bin/{{binary_name}} ./cmd/{{binary_name}}
+# Show detailed help for all recipes
+help:
+    @echo "Twine - Just Command Runner"
+    @echo ""
+    @echo "Usage: just <recipe>"
+    @echo ""
+    @echo "Available recipes:"
+    @just --list
+    @echo ""
+    @echo "Build info:"
+    @echo "  Version: {{version}}"
+    @echo "  Commit:  {{commit}}"
 
-# Build and run the application
-run: build
-    ./bin/{{binary_name}}
+# Count lines of code (requires: brew install cloc)
+cloc:
+    cloc . --vcs=git
+
+# Show version info that will be injected into builds
+version-info:
+    @echo "Version: {{version}}"
+    @echo "Commit:  {{commit}}"
+    @echo "Date:    {{build_date}}"
+    @echo "Built by: {{built_by}}"
+
+# -----------------------------------------------------------------------------
+# GO MANGEMENT COMMANDS
+# -----------------------------------------------------------------------------
+
+# Clean build artifacts
+clean:
+    rm -rf ./bin ./dist coverage.out coverage.html
+    @echo "✅ Cleaned build artifacts"
+
+# Run Go mod tidy to clean up dependencies
+tidy:
+    go mod tidy
+    @echo "✅ Cleaned Go module dependencies"
+
+# Format all Go code
+fmt:
+    go fmt ./...
+    @echo "✅ Formatted Go code"
+
+# Run Go linter (requires: brew install golangci-lint)
+lint:
+    golangci-lint run ./...
+
+# Run all quality checks (fmt, lint, test)
+check: fmt lint test
+    @echo "✅ All checks passed!"
+
+# -----------------------------------------------------------------------------
+# TEST COMMANDS
+# -----------------------------------------------------------------------------
 
 # Run all tests (unit + integration), excluding examples
 test:
@@ -70,17 +119,9 @@ test-package package:
 test-watch:
     find . -name "*.go" -not -path "./vendor/*" -not -path "./examples/*" | entr -c go test -v $(go list ./... | grep -v /examples)
 
-# Compile Tailwind CSS
-css:
-    tailwindcss -i ./assets/index.css -o ./public/assets/styles.css
-
-# Watch and recompile CSS on changes
-css-watch:
-    tailwindcss -i ./assets/index.css -o ./public/assets/styles.css --watch
-
-# Count lines of code (requires: brew install cloc)
-cloc:
-    cloc . --vcs=git
+# -----------------------------------------------------------------------------
+# CLI COMMANDS
+# -----------------------------------------------------------------------------
 
 # Build CLI with version info injected
 build-cli:
@@ -104,35 +145,19 @@ build-cli-all:
     GOOS=windows GOARCH=amd64 go build {{ldflags}} -o dist/{{cli_binary}}-windows-amd64.exe ./cmd/twine
     @echo "✅ Built binaries for all platforms in dist/"
 
-# Show version info that will be injected into builds
-version-info:
-    @echo "Version: {{version}}"
-    @echo "Commit:  {{commit}}"
-    @echo "Date:    {{build_date}}"
-    @echo "Built by: {{built_by}}"
+# -----------------------------------------------------------------------------
+# DEV COMMANDS
+# -----------------------------------------------------------------------------
 
-# Clean build artifacts
-clean:
-    rm -rf ./bin ./dist coverage.out coverage.html
-    @echo "✅ Cleaned build artifacts"
+# Build the main application (depends on CSS compilation)
+build: css
+    templ generate
+    mkdir -p ./bin
+    go build -o ./bin/{{binary_name}} ./cmd/{{binary_name}}
 
-# Run Go mod tidy to clean up dependencies
-tidy:
-    go mod tidy
-    @echo "✅ Cleaned Go module dependencies"
-
-# Format all Go code
-fmt:
-    go fmt ./...
-    @echo "✅ Formatted Go code"
-
-# Run Go linter (requires: brew install golangci-lint)
-lint:
-    golangci-lint run ./...
-
-# Run all quality checks (fmt, lint, test)
-check: fmt lint test
-    @echo "✅ All checks passed!"
+# Build and run the application
+run: build
+    ./bin/{{binary_name}}
 
 # Development workflow - watch for changes and rebuild
 dev:
@@ -140,15 +165,10 @@ dev:
     @echo "Run 'just css-watch' in another terminal for CSS hot reload"
     just run
 
-# Show detailed help for all recipes
-help:
-    @echo "Twine - Just Command Runner"
-    @echo ""
-    @echo "Usage: just <recipe>"
-    @echo ""
-    @echo "Available recipes:"
-    @just --list
-    @echo ""
-    @echo "Build info:"
-    @echo "  Version: {{version}}"
-    @echo "  Commit:  {{commit}}"
+# Compile Tailwind CSS
+css:
+    tailwindcss -i ./assets/index.css -o ./public/assets/styles.css
+
+# Watch and recompile CSS on changes
+css-watch:
+    tailwindcss -i ./assets/index.css -o ./public/assets/styles.css --watch
