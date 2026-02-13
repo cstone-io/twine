@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/cstone-io/twine/compare/twine-v0.3.0...twine-v0.4.0) (2026-02-13)
+
+
+### Features
+
+* added update command to cli for self-updating functionality ([50c5538](https://github.com/cstone-io/twine/commit/50c5538))
+
 ## [0.3.0](https://github.com/cstone-io/twine/compare/twine-v0.2.2...twine-v0.3.0) (2026-02-12)
 
 

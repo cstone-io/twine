@@ -8,7 +8,7 @@ import (
 var (
 	// Build-time variables (set via -ldflags)
 	// Exported for use by update command
-	Version = "dev"
+	Version = "0.4.0"
 	Commit  = "none"
 	Date    = "unknown"
 	BuiltBy = "unknown"
